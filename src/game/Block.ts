@@ -14,11 +14,7 @@ class Block extends PhysicsObject{
         Block.blocks.push(this);
         this.sizeW = BLOCK_SIZE_PER_H * Util.height;
         this.sizeH = this.sizeW;
-        switch( randI(0,3) ){
-            case 0: this.color = BLOCK_COLOR;   break;
-            case 1: this.color = BLOCK_COLOR2;  break;
-            case 2: this.color = BLOCK_COLOR3;  break;
-        }
+        this.color = BLOCK_COLOR;
         this.setDisplay( px, py, type );
         this.setBody( px, py, type );
         this.body.angle = randI(0,3) * Math.PI/2;

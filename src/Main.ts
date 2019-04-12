@@ -14,7 +14,6 @@ class Main extends eui.UILayer {
         PhysicsObject.prepare( PIXEL_PER_METER );
         Camera2D.initial();
         Game.loadSceneGamePlay();
-        
         egret.startTick(this.tickLoop, this);
     }
 

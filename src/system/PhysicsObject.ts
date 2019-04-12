@@ -1,5 +1,7 @@
 // Liberapp 2019 Tahiti Katagai
 // 物理エンジンp2オブジェクト
+//  Unityと同じように物理系はfixedUpdate()に処理を記述する。（update()はオーバライドしない）
+//  onDestroy()を記述する際はsuper.onDestroy()コールを忘れずに。（p2.Bodyを削除しているため）
 
 abstract class PhysicsObject extends GameObject {
 
