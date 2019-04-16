@@ -19,7 +19,7 @@ class Score extends GameObject{
 
         let bestScore = egret.localStorage.getItem(SAVE_KEY_BESTSCORE); // string
         if( bestScore == null ){
-            bestScore = "10";
+            bestScore = "100";
             egret.localStorage.setItem(SAVE_KEY_BESTSCORE, bestScore);
         }
         this.bestScore = parseInt( bestScore );
@@ -35,14 +35,16 @@ class Score extends GameObject{
         Score.I = null;
     }
 
-    update(){}
+    update(){
+        const px = Math.floor( Player.I.px * 0.1 );
 
-    addPoint( point:number = 1 ) {
-        this.point += point;
-        this.text.text = "" + this.point.toFixed();
-        if( this.bestScore < this.point ){
-            this.bestScore = this.point;
-            this.textBest.text = "BEST:" + this.point.toFixed();
+        if( this.point < px ){
+            this.point = px;
+            this.text.text = "" + this.point.toFixed();
+            if( this.bestScore < this.point ){
+                this.bestScore = this.point;
+                this.textBest.text = "BEST:" + this.point.toFixed();
+            }
         }
     }
 }

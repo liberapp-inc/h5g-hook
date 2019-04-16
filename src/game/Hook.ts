@@ -5,15 +5,15 @@ class Hook extends GameObject{
 
     static hooks:Hook[] = [];
     scale:number = 1;
-    mx:number;
-    my:number;
+    px:number;
+    py:number;
 
     constructor( px:number, py:number ) {
         super();
 
         Hook.hooks.push(this);
-        this.mx = PhysicsObject.pixelToMeter( px );
-        this.my = PhysicsObject.pixelToMeter( py );
+        this.px = px;
+        this.py = py;
         this.setDisplay( px, py );
         Camera2D.transform( this.display );
     }
@@ -39,16 +39,20 @@ class Hook extends GameObject{
     update() {
         this.scale += (1.0 - this.scale) * 0.25;
 
-        this.display.x = PhysicsObject.meterToPixel( this.mx );
-        this.display.y = PhysicsObject.meterToPixel( this.my );
-        Camera2D.transform( this.display );
+        this.display.x = this.px;
+        this.display.y = this.py;
+        Camera2D.transform( this.display, this.scale );
+
+        if( this.display.x <= -2 * Util.width ){
+            this.destroy();
+        }
     }
 
     static detect( px:number, py:number ):Hook{
         let nearest = null;
         let nd2 = Util.width**2;
         Hook.hooks.forEach( hook => {
-            const d2 = (hook.display.x - px)**2 + (hook.display.y - py)**2;
+            const d2 = (hook.px - px)**2 + (hook.py - py)**2;
             if( nd2 > d2 ){
                 nd2 = d2;
                 nearest = hook;

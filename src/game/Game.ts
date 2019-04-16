@@ -20,11 +20,8 @@ class Game {
     static loadSceneGamePlay() {
         PhysicsObject.deltaScale = 1;
         new Score();
-        new Player( Util.width * 0.2, Util.height * 0.3 );
+        new Player( Util.width * 0.3, Util.height * 0.3 );
+        new Wave();
         new StartMessage();
-
-        new Hook( Util.width * 0.5, Util.height * 0.2 );
-        new Hook( Util.width * 1.0, Util.height * 0.2 );
-        new Hook( Util.width * 1.5, Util.height * 0.2 );
     }
 }

@@ -10,6 +10,7 @@ class Player extends PhysicsObject{
     hookX:number = 0;
     hookY:number = 0;
     hookR:number = 0;
+    wire:egret.Shape = null;
     state:()=>void = this.stateNone;
     step:number = 0;
 
@@ -28,6 +29,8 @@ class Player extends PhysicsObject{
     onDestroy(){
         super.onDestroy();
         this.button.destroy();
+        if( this.wire )
+            GameObject.display.removeChild( this.wire );
         Player.I = null;
     }
 
@@ -41,7 +44,7 @@ class Player extends PhysicsObject{
         shape.x = px;
         shape.y = py;
         shape.graphics.beginFill( PLAYER_COLOR );
-        shape.graphics.drawCircle( px, py, this.radius );
+        shape.graphics.drawCircle( 0, 0, this.radius );
         shape.graphics.endFill();
     }
 
@@ -54,8 +57,8 @@ class Player extends PhysicsObject{
 
     fixedUpdate() {
         this.state();
-
-        //Camera2D.x += (this.px - Camera2D.x) * 0.5;
+        Camera2D.transform( this.display );
+        Camera2D.x = this.px - Util.width*0.5;
     }
 
     setStateNone(){
@@ -69,7 +72,7 @@ class Player extends PhysicsObject{
         this.body.gravityScale = 1;
     }
     stateFree() {
-        let hook = Hook.detect( this.px, this.py );
+        let hook = Hook.detect( this.px+this.body.velocity[0]*4, this.py+this.body.velocity[1]*4 );
         if( hook && this.button.press ){
             this.setStateHang( hook );
             return;
@@ -85,9 +88,11 @@ class Player extends PhysicsObject{
     setStateHang( hook:Hook ){
         this.state = this.stateHang;
         hook.catch();
-        this.hookX = hook.display.x;
-        this.hookY = hook.display.y;
+        this.hookX = hook.px;
+        this.hookY = hook.py;
         this.hookR = Math.sqrt( (this.hookX - this.px)**2 + (this.hookY - this.py)**2 );
+        this.body.velocity[0] *= 1.2;
+        this.body.velocity[1] *= 1.2;
     }
     stateHang(){
         // ワイヤー長さの距離
@@ -99,15 +104,39 @@ class Player extends PhysicsObject{
         dy *= _d;
         this.px = this.hookX - dx * this.hookR;
         this.py = this.hookY - dy * this.hookR;
+        this.display.x = this.px;
+        this.display.y = this.py;
 
         // 振り子
         let dot = this.body.velocity[0] * dx + this.body.velocity[1] * dy;
-        this.body.velocity[0] -= dx * dot;
-        this.body.velocity[1] -= dy * dot;
+        if( dot < 0 ){
+            this.body.velocity[0] -= dx * dot;
+            this.body.velocity[1] -= dy * dot;
+            this.body.velocity[0] *= 1.01;
+            this.body.velocity[1] *= 1.01;
+        }
 
-        if( this.button.press ){
+        if( this.button.touch == false ){
+            this.body.velocity[1] -= Util.height * 0.005;
+            GameObject.display.removeChild( this.wire );
+            this.wire = null;
             this.setStateFree();
         }
     }
 
+    drawWire(){
+        if( this.wire == null ){
+            this.wire = new egret.Shape();
+        }else{
+            this.wire.graphics.clear();
+        }
+        const shape = this.wire;
+        shape.graphics.lineStyle(2, PLAYER_COLOR);
+        shape.graphics.moveTo( this.player.x, this.player.y );
+        let x = this.hook.x - this.player.x;
+        let y = this.hook.y - this.player.y;
+        x = this.player.x + x * this.rate;
+        y = this.player.y + y * this.rate;
+        shape.graphics.lineTo( x, y );
+    }
 }
