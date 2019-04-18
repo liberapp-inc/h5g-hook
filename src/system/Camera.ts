@@ -14,9 +14,11 @@ class Camera2D {
     }
 
     static transform( display:egret.DisplayObject, objScale:number=1 ){
-        display.x = (display.x - Camera2D.x) * Camera2D.scale;
-        display.y = (display.y - Camera2D.y) * Camera2D.scale;
+        display.x = Camera2D.transX( display.x );
+        display.y = Camera2D.transY( display.y );
         display.scaleX = display.scaleY = Camera2D.scale * objScale;
     }
+    static transX( px:number ):number { return (px - Camera2D.x) * Camera2D.scale; }
+    static transY( py:number ):number { return (py - Camera2D.y) * Camera2D.scale; }
 }
 

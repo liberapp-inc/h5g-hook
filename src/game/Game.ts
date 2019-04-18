@@ -2,12 +2,12 @@
 // ゲームシーン
 
 const PIXEL_PER_METER = 10;
-const PLAYER_RADIUS_PER_W = 1/32;
-const HOOK_RADIUS_PER_W = 1/32;
-const BLOCK_SIZE_PER_H = 1/16;
+const PLAYER_RADIUS_PER_W = 1/40;
+const HOOK_RADIUS_PER_W = 1/40;
+const BLOCK_SIZE_PER_W = 1/16;
 const GRAVITY_PER_H = (1/300);
 
-const SAVE_KEY_BESTSCORE = "tower-bestScore";
+const SAVE_KEY_BESTSCORE = "hook-bestScore";
 
 const BACK_COLOR = 0xf0e0d0;    // index.htmlで設定
 const FONT_COLOR = 0x0000ff;

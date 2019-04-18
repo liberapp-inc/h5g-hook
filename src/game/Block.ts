@@ -8,16 +8,16 @@ class Block extends PhysicsObject{
     sizeH:number;
     color:number;
 
-    constructor( px:number, py:number, type:number ) {
+    constructor( px:number, py:number ) {
         super();
 
         Block.blocks.push(this);
-        this.sizeW = BLOCK_SIZE_PER_H * Util.height;
-        this.sizeH = this.sizeW;
+        this.sizeW = BLOCK_SIZE_PER_W * Util.height;
+        this.sizeH = this.sizeW * randI(1,3);
         this.color = BLOCK_COLOR;
-        this.setDisplay( px, py, type );
-        this.setBody( px, py, type );
-        this.body.angle = randI(0,3) * Math.PI/2;
+        this.setDisplay( px, py );
+        this.setBody( px, py );
+        this.body.angle = ( 0.5 + randI(0,4) ) * Math.PI/2;
         this.display.rotation = this.body.angle * 180 / Math.PI;
         Camera2D.transform( this.display );
     }
@@ -27,7 +27,7 @@ class Block extends PhysicsObject{
         Block.blocks = Block.blocks.filter( obj => obj != this );
     }
 
-    setDisplay( px:number, py:number, type:number ){
+    setDisplay( px:number, py:number ){
         if( this.display )
             GameObject.display.removeChild( this.display );
 
@@ -37,41 +37,13 @@ class Block extends PhysicsObject{
         shape.x = px;
         shape.y = py;
         shape.graphics.beginFill( this.color );
-        switch( type ){
-            case 0:
-            shape.graphics.drawRect( -0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
-            break;
-            case 1:
-            shape.graphics.drawRect( -1.0*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
-            shape.graphics.drawRect( +0.0*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
-            break;
-            case 2:
-            shape.graphics.drawRect( -1.0*this.sizeW, -1.0*this.sizeH, this.sizeW, this.sizeH );
-            shape.graphics.drawRect( +0.0*this.sizeW, -1.0*this.sizeH, this.sizeW, this.sizeH );
-            shape.graphics.drawRect( +0.0*this.sizeW, +0.0*this.sizeH, this.sizeW, this.sizeH );
-            break;
-        }
+        shape.graphics.drawRect( -0.5*this.sizeW, -0.5*this.sizeH, this.sizeW, this.sizeH );
         shape.graphics.endFill();
     }
 
-    setBody( px:number, py:number, type:number ){
-        switch( type ){
-            case 0:
-            this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)]} );
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [0, 0], 0);
-            break;
-            case 1:
-            this.body = new p2.Body( {gravityScale:0, mass:2, position:[this.p2m(px), this.p2m(py)]} );
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [-0.5*this.sizeW, 0], 0);
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [+0.5*this.sizeW, 0], 0);
-            break;
-            case 2:
-            this.body = new p2.Body( {gravityScale:0, mass:3, position:[this.p2m(px), this.p2m(py)]} );
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [-0.5*this.sizeW, -0.5*this.sizeH], 0);
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [+0.5*this.sizeW, -0.5*this.sizeH], 0);
-            this.body.addShape(new p2.Box( { width:this.sizeW, height:this.sizeH } ), [+0.5*this.sizeW, +0.5*this.sizeH], 0);
-            break;
-        }
+    setBody( px:number, py:number ){
+        this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)], type:p2.Body.STATIC } );
+        this.body.addShape(new p2.Box( { width:this.p2m(this.sizeW), height:this.p2m(this.sizeH) } ), [0, 0], 0);
         this.body.displays = [this.display];
         PhysicsObject.world.addBody(this.body);
     }
@@ -79,13 +51,8 @@ class Block extends PhysicsObject{
     fixedUpdate() {
         Camera2D.transform( this.display );
 
-        if( this.display.x < Util.width * -0.25 ){
+        if( this.display.x <= -2 * Util.width ){
             this.destroy();
         }
-    }
-
-    drop(){
-        this.body.setZeroForce();
-        this.body.gravityScale = 1.0;
     }
 }

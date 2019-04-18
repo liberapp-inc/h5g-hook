@@ -58,10 +58,12 @@ class Hook extends GameObject{
                 nearest = hook;
             }
         });
+        if( nearest )
+            nearest.scale = 1.25;    // mark
         return nearest;
     }
     
     catch(){
-        this.scale = 2.0;
+        this.scale = 2.5;
     }
 }

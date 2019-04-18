@@ -28,7 +28,7 @@ class Wire extends GameObject{
         const shape = new egret.Shape();
         this.display = shape;
         GameObject.display.addChild(this.display);
-        shape.graphics.lineStyle(2, PLAYER_COLOR);
+        shape.graphics.lineStyle(4, PLAYER_COLOR);
         shape.graphics.moveTo( this.player.x, this.player.y );
         let x = this.hook.x - this.player.x;
         let y = this.hook.y - this.player.y;

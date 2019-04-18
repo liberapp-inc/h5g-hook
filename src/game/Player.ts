@@ -10,7 +10,7 @@ class Player extends PhysicsObject{
     hookX:number = 0;
     hookY:number = 0;
     hookR:number = 0;
-    wire:egret.Shape = null;
+    wire:Wire = null;
     state:()=>void = this.stateNone;
     step:number = 0;
 
@@ -23,14 +23,12 @@ class Player extends PhysicsObject{
         this.setBody( px, py );
         Camera2D.transform( this.display );
         
-        this.button = new Button( null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.1, null );
+        this.button = new Button( null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.0, null );
     }
 
     onDestroy(){
         super.onDestroy();
         this.button.destroy();
-        if( this.wire )
-            GameObject.display.removeChild( this.wire );
         Player.I = null;
     }
 
@@ -49,9 +47,11 @@ class Player extends PhysicsObject{
     }
 
     setBody( px:number, py:number ){
-        this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)]} );
+        this.body = new p2.Body( {gravityScale:0, mass:1, position:[this.p2m(px), this.p2m(py)] } );
         this.body.addShape(new p2.Circle({ radius:this.p2m(this.radius) }));
         this.body.displays = [this.display];
+        // this.body.on("impact",  this.conflict, this);            // p2.Bodyにevent設定してもコールされない
+        // PhysicsObject.world.on("impact",  this.contact, this);   // p2.worldに直接event設定すると、１つの接触ですべてのp2.bodyオブジェクトがコールされる（抽出が必要）
         PhysicsObject.world.addBody(this.body);
     }
 
@@ -72,6 +72,7 @@ class Player extends PhysicsObject{
         this.body.gravityScale = 1;
     }
     stateFree() {
+        this.step++;
         let hook = Hook.detect( this.px+this.body.velocity[0]*4, this.py+this.body.velocity[1]*4 );
         if( hook && this.button.press ){
             this.setStateHang( hook );
@@ -93,6 +94,7 @@ class Player extends PhysicsObject{
         this.hookR = Math.sqrt( (this.hookX - this.px)**2 + (this.hookY - this.py)**2 );
         this.body.velocity[0] *= 1.2;
         this.body.velocity[1] *= 1.2;
+        this.wire = new Wire( this.display, hook.display );
     }
     stateHang(){
         // ワイヤー長さの距離
@@ -118,25 +120,9 @@ class Player extends PhysicsObject{
 
         if( this.button.touch == false ){
             this.body.velocity[1] -= Util.height * 0.005;
-            GameObject.display.removeChild( this.wire );
+            this.wire.rewind = true;
             this.wire = null;
             this.setStateFree();
         }
-    }
-
-    drawWire(){
-        if( this.wire == null ){
-            this.wire = new egret.Shape();
-        }else{
-            this.wire.graphics.clear();
-        }
-        const shape = this.wire;
-        shape.graphics.lineStyle(2, PLAYER_COLOR);
-        shape.graphics.moveTo( this.player.x, this.player.y );
-        let x = this.hook.x - this.player.x;
-        let y = this.hook.y - this.player.y;
-        x = this.player.x + x * this.rate;
-        y = this.player.y + y * this.rate;
-        shape.graphics.lineTo( x, y );
     }
 }
