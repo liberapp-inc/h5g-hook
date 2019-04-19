@@ -1,4 +1,4 @@
-// Hook
+// Circus Jump
 // Liberapp 2019 - Tahiti Katagai
 
 class Main extends eui.UILayer {

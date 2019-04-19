@@ -1,5 +1,5 @@
 // Liberapp 2019 - Tahiti Katagai
-// 汎用ボタン　１つ
+// 汎用ボタン
 
 class Button extends GameObject{
 

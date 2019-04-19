@@ -2,16 +2,16 @@
 // ランダム XorShift
 // シード指定で乱数周期を再現できる
 
-function rand():number { return Random.I.v(); }
-function randF( min:number, max:number ):number { return Random.I.f(min, max); }
-function randI( min:number, max:number ):number { return Random.I.i(min, max); }
+function rand():number { return Random.I.v(); }                                     // 0以上 1未満
+function randF( min:number, max:number ):number { return Random.I.f(min, max); }    // min以上 max未満
+function randI( min:number, max:number ):number { return Random.I.i(min, max); }    // min以上 max未満（整数）
 function randBool():boolean { return Random.I.bool(); }
 
 class Random {
 
     static readonly max:number = 0x0fffffff;
 
-    static I:Random = new Random( Math.floor( Math.random()*Random.max ) );     // singleton instance
+    static I:Random = new Random( Math.floor( Math.random()*Random.max ) ); // singleton instance
 
     v():number{ return (this.next() & Random.max) / (Random.max + 1); }     // 0以上 1未満
     f(min:number, max:number) { return min + this.v() * (max - min); }      // min以上 max未満

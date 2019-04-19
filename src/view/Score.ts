@@ -36,6 +36,8 @@ class Score extends GameObject{
     }
 
     update(){
+        if( Player.I.state == Player.I.stateNone ) return;
+        
         const px = Math.floor( Player.I.px * 0.1 );
 
         if( this.point < px ){

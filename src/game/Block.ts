@@ -8,16 +8,25 @@ class Block extends PhysicsObject{
     sizeH:number;
     color:number;
 
-    constructor( px:number, py:number ) {
+    static newBlock( px:number, py:number ){
+        const s = BLOCK_SIZE_PER_W * Util.width;
+        new Block( px, py, s, s, Math.PI*0.25 );
+    }
+    static newFloor( px:number, py:number ){
+        const w = FLOOR_SIZE_PER_W * Util.width;
+        const h = Util.height - py;
+        new Block( px, py+h*0.5, w * 0.7, h, 0 );
+    }
+    constructor( px:number, py:number, w:number, h:number, r:number ) {
         super();
 
         Block.blocks.push(this);
-        this.sizeW = BLOCK_SIZE_PER_W * Util.height;
-        this.sizeH = this.sizeW * randI(1,3);
+        this.sizeW = w;
+        this.sizeH = h;
         this.color = BLOCK_COLOR;
         this.setDisplay( px, py );
         this.setBody( px, py );
-        this.body.angle = ( 0.5 + randI(0,4) ) * Math.PI/2;
+        this.body.angle = r;
         this.display.rotation = this.body.angle * 180 / Math.PI;
         Camera2D.transform( this.display );
     }

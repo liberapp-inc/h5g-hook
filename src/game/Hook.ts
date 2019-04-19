@@ -32,7 +32,7 @@ class Hook extends GameObject{
         GameObject.display.addChildAt(this.display, 1);
         shape.x = px;
         shape.y = py;
-        shape.graphics.lineStyle(8, 0xffc000);
+        shape.graphics.lineStyle(4, PLAYER_COLOR);
         shape.graphics.drawCircle( 0, 0, HOOK_RADIUS_PER_W * Util.width );
     }
 
@@ -50,16 +50,18 @@ class Hook extends GameObject{
 
     static detect( px:number, py:number ):Hook{
         let nearest = null;
-        let nd2 = Util.width**2;
+        let nd2 = (Util.width * 0.7)**2;
         Hook.hooks.forEach( hook => {
-            const d2 = (hook.px - px)**2 + (hook.py - py)**2;
-            if( nd2 > d2 ){
-                nd2 = d2;
-                nearest = hook;
+            if( px <= hook.px ){
+                const d2 = (hook.px - px)**2 + (hook.py - py)**2;
+                if( nd2 > d2 ){
+                    nd2 = d2;
+                    nearest = hook;
+                }
             }
         });
         if( nearest )
-            nearest.scale = 1.25;    // mark
+            nearest.scale = 1.5;    // mark
         return nearest;
     }
     
